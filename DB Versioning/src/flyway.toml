@@ -1,0 +1,6 @@
+url = "jdbc:sqlserver://localhost;databaseName=db_versioning_flyway;encrypt=false"
+user = "sa"
+password = "Passw0rd!"
+schemas = ["dbo"]
+locations = ["filesystem:./src/sql"]
+

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="V2024.12.24.01__create_tables" author="user">
+        <sqlFile path="2024/V2024.12.24.01__create_tables.sql" />
+    </changeSet>
+
+    <changeSet id="V2024.12.25.01__alter_employees" author="user">
+        <sqlFile path="2024/V2024.12.25.01__alter_employees.sql" />
+    </changeSet>
+
+    <changeSet id="V2024.12.25.02__alter_employees" author="user">
+        <sqlFile path="2024/V2024.12.25.02__alter_employees.sql" />
+    </changeSet>
+
+    <changeSet id="V2025.12.24.01__create_tables" author="user">
+        <sqlFile path="2025/V2025.12.24.01__create_tables.sql" />
+    </changeSet>
+
+    <changeSet id="V2025.12.25.02__alter_shops" author="user">
+        <sqlFile path="2025/V2025.12.25.02__alter_shops.sql" />
+    </changeSet>
+
+</databaseChangeLog>
