@@ -1,0 +1,10 @@
+@NLogService_HostAddress = http://localhost:5002
+
+###
+
+POST {{NLogService_HostAddress}}/log
+Content-Type: application/json
+
+{ "message": "Hello from NLog", "count": 1 }
+
+###

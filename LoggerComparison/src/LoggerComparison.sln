@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLogService", "NLogService\NLogService.csproj", "{2A8B1143-D280-46A1-BCBD-57DC3F68237B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerilogService", "SerilogService\SerilogService.csproj", "{74066C83-716E-4208-B95A-162813072A41}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A8B1143-D280-46A1-BCBD-57DC3F68237B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A8B1143-D280-46A1-BCBD-57DC3F68237B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A8B1143-D280-46A1-BCBD-57DC3F68237B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A8B1143-D280-46A1-BCBD-57DC3F68237B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74066C83-716E-4208-B95A-162813072A41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74066C83-716E-4208-B95A-162813072A41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74066C83-716E-4208-B95A-162813072A41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74066C83-716E-4208-B95A-162813072A41}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

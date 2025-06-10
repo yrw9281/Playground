@@ -1,0 +1,10 @@
+@SerilogService_HostAddress = http://localhost:5001
+
+###
+
+POST {{SerilogService_HostAddress}}/log
+Content-Type: application/json
+
+{ "message": "Hello from Serilog", "count": 1 }
+
+###
