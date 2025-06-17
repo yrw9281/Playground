@@ -5,6 +5,6 @@
 POST {{SerilogService_HostAddress}}/log
 Content-Type: application/json
 
-{ "message": "Hello from Serilog", "count": 1 }
+{ "message": "Hello from Serilog special", "count": 1 }
 
 ###

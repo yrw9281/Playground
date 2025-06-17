@@ -1,0 +1,6 @@
+@DbProxy_HostAddress = http://localhost:5003
+
+GET {{DbProxy_HostAddress}}/getAreas/
+Accept: application/json
+
+###

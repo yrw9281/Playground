@@ -1,4 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
+using Dapper;
+
+using Microsoft.Data.SqlClient;
 
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -8,12 +10,10 @@ using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
-using System.Diagnostics;
-
 var builder = WebApplication.CreateBuilder(args);
 
 var otlpEndpoint = builder.Configuration.GetValue("Otlp:Endpoint", defaultValue: "http://localhost:4317")!;
-var serviceName = builder.Configuration.GetValue("ServiceName", defaultValue: "serilog-service")!;
+var serviceName = builder.Configuration.GetValue("ServiceName", defaultValue: "db-proxy-service")!;
 var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "unknown";
 var serviceInstanceId = Environment.MachineName;
 
@@ -49,6 +49,10 @@ builder.Services.AddOpenTelemetry()
         tracerProviderBuilder
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
+            .AddSqlClientInstrumentation(opts =>
+            {
+                opts.SetDbStatementForText = true;
+            })
             .AddOtlpExporter(opts =>
             {
                 opts.Endpoint = new Uri(otlpEndpoint);
@@ -67,54 +71,26 @@ builder.Services.AddOpenTelemetry()
 
 var app = builder.Build();
 
-app.MapPost("/log", ([FromBody] LogRequest request, ILogger<Program> logger) =>
+app.MapGet("/getAreas", async (ILogger<Program> logger) =>
 {
-    var stopwatch = Stopwatch.StartNew();
+    var connectionString = "Server=localhost;Database=db_smx_poc_2;User Id=sa;Password=Passw0rd!;Encrypt=False;";
 
-    for (int i = 1; i <= request.Count; i++)
-    {
-        var demoObject = new DemoObject
-        {
-            Name = $"Demo {i}",
-            Value = i,
-            Timestamp = DateTime.UtcNow,
-            Tags = new List<string> { "example", "test", "logging" }
-        };
-        logger.LogWarning("{Message} - #{i}", request.Message, i);
-        logger.LogError("{Message} - #{i} - {@demoObject}", request.Message, i, demoObject);
-    }
+    using var connection = new SqlConnection(connectionString);
+    var areas = await connection.QueryAsync<Area>(
+        @"SELECT Id, Section1, Section2, Section3 FROM dbo.Area"
+    );
 
-    stopwatch.Stop();
+    logger.LogWarning("Retrieved {Count} areas from the database, All: {@areas}", areas.Count(), areas);
 
-    using var httpClient = new HttpClient();
-    var apiUrl = "http://localhost:5003/getAreas/";
-    try
-    {
-        var response = httpClient.GetAsync(apiUrl).Result;
-        var content = response.Content.ReadAsStringAsync().Result;
-        logger.LogInformation("GET {ApiUrl} response: {Content}", apiUrl, content);
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "Error calling {ApiUrl}", apiUrl);
-    }
-
-    return Results.Ok(new
-    {
-        request.Count,
-        request.Message,
-        stopwatch.ElapsedMilliseconds
-    });
+    return Results.Ok(areas);
 });
 
 app.Run();
 
-public record LogRequest(string Message, int Count);
-
-public class DemoObject
+public class Area
 {
-    public string Name { get; set; } = string.Empty;
-    public int Value { get; set; }
-    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-    public List<string> Tags { get; set; } = new List<string>();
+    public Guid Id { get; set; }
+    public string Section1 { get; set; } = default!;
+    public string Section2 { get; set; } = default!;
+    public string Section3 { get; set; } = default!;
 }

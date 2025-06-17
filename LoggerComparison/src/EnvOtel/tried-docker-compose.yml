@@ -1,0 +1,77 @@
+services:
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    networks:
+      - monitoring
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo
+    ports:
+      - "3200:3200"
+    volumes:
+      - ./tempo-config.yaml:/etc/tempo/tempo-config.yaml
+      - ./data/tempo:/var/tempo
+    command:
+      - "-config.file=/etc/tempo/tempo-config.yaml"
+    networks:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ./data/prometheus:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    command:
+      [
+        "--config=/etc/otelcol-config.yaml",
+        "--feature-gates=service.profilesSupport",
+      ]
+    volumes:
+      - ./otelcol-config.yaml:/etc/otelcol-config.yaml
+      - ./otelcol-config-export-http.yaml:/etc/otelcol-config-export-http.yaml
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    networks:
+      - monitoring
+    depends_on:
+      - loki
+      - tempo
+      - prometheus
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana-provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana-provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - monitoring
+    depends_on:
+      - loki
+      - tempo
+      - prometheus
+
+networks:
+  monitoring:
+    driver: bridge

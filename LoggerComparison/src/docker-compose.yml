@@ -1,0 +1,25 @@
+services:
+  otel-lgtm:
+    image: grafana/otel-lgtm
+    ports:
+      - 3000:3000
+      - 4317:4317
+      - 4318:4318
+
+  # serilog-service:
+  #   build:
+  #     context: ./SerilogService
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 5001:5001
+  #   depends_on:
+  #     - otel-lgtm
+
+  # nlog-service:
+  #   build:
+  #     context: ./NLogService
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 5002:5002
+  #   depends_on:
+  #     - otel-lgtm

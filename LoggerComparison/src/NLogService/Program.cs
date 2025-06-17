@@ -8,6 +8,7 @@ using NLog;
 using NLog.Web;
 
 using System.Diagnostics;
+using OpenTelemetry.Metrics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,16 @@ builder.Services.AddOpenTelemetry()
         });
 
         logging.AddConsoleExporter();
+    })
+    .WithMetrics(meterProviderBuilder =>
+    {
+        meterProviderBuilder
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation()
+            .AddOtlpExporter(opts =>
+            {
+                opts.Endpoint = new Uri(otlpEndpoint);
+            });
     });
 
 var app = builder.Build();
@@ -69,6 +80,19 @@ app.MapPost("/log", ([FromBody] LogRequest request, ILogger<Program> logger) =>
     }
 
     stopwatch.Stop();
+
+    // using var httpClient = new HttpClient();
+    // var apiUrl = "http://localhost:5003/getAreas/";
+    // try
+    // {
+    //     var response = httpClient.GetAsync(apiUrl).Result;
+    //     var content = response.Content.ReadAsStringAsync().Result;
+    //     logger.LogInformation("GET {ApiUrl} response: {Content}", apiUrl, content);
+    // }
+    // catch (Exception ex)
+    // {
+    //     logger.LogError(ex, "Error calling {ApiUrl}", apiUrl);
+    // }
 
     return Results.Ok(new
     {
